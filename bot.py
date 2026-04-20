@@ -707,37 +707,62 @@ async def help(ctx):
         inline=False
     )
 
-    await ctx.reply(embed=embed)
+    await ctx.reply(embed=embed) 
+#------------gg--------------------
+class GiveawayView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.users = set()
+
+    @discord.ui.button(label="🎉 Join Giveaway", style=discord.ButtonStyle.green)
+    async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
+        user = interaction.user
+
+        if user.id in self.users:
+            await interaction.response.send_message("❌ Već si u giveaway-u!", ephemeral=True)
+            return
+
+        self.users.add(user.id)
+        await interaction.response.send_message("✅ Ušao si u giveaway!", ephemeral=True)
 #-----------------GW-----------------
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def giveaway(ctx, time: int, *, prize: str):
 
+    view = GiveawayView()
+
     embed = discord.Embed(
-        title="🎁 GIVEAWAY!",
-        description=f"Nagrada: **{prize}**\nReaguj 🎉 da učestvuješ!\nTraje: {time} sekundi",
+        title="🎁 GIVEAWAY",
+        description=f"""
+🏆 Nagrada: **{prize}**
+
+👥 Učesnici: **0**
+⏳ Vrijeme: **{time} sekundi**
+        """,
         color=discord.Color.gold()
     )
 
-    msg = await ctx.send(embed=embed)
-    await msg.add_reaction("🎉")
+    msg = await ctx.send(embed=embed, view=view)
 
-    await asyncio.sleep(time)
+    while time > 0:
+        await asyncio.sleep(5)
+        time -= 5
 
-    new_msg = await ctx.channel.fetch_message(msg.id)
+        embed.description = f"""
+🏆 Nagrada: **{prize}**
 
-    users = []
-    for reaction in new_msg.reactions:
-        if str(reaction.emoji) == "🎉":
-            async for user in reaction.users():
-                if not user.bot:
-                    users.append(user)
+👥 Učesnici: **{len(view.users)}**
+⏳ Vrijeme: **{time} sekundi**
+        """
 
-    if len(users) == 0:
+        await msg.edit(embed=embed, view=view)
+
+    if len(view.users) == 0:
         await ctx.send("❌ Nema učesnika!")
         return
 
-    winner = random.choice(users)
+    winner_id = random.choice(list(view.users))
+    winner = await ctx.guild.fetch_member(winner_id)
 
     await ctx.send(f"🏆 Pobjednik je: {winner.mention} 🎉")
 # ---------------- RUN ----------------
