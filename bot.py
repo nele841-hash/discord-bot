@@ -6,9 +6,11 @@ import random
 import time
 import asyncio
 
-if not os.path.exists("data.json"):
-    with open("data.json", "w") as f:
-        json.dump({}, f)
+from pymongo import MongoClient
+
+client = MongoClient(os.getenv("MONGO_URL"))
+db = client["discordbot"]
+users = db["users"]
 
 intents = discord.Intents.default()
 intents.message_content = True
