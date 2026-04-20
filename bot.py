@@ -159,28 +159,7 @@ async def radi(ctx):
     await ctx.reply(embed=embed, mention_author=False)
 
 # ---------------- BANKA ----------------
-@bot.command()
-async def banka(ctx):
-    user_id = str(ctx.author.id)
-
-    user = users.find_one({"_id": user_id})
-
-    if not user:
-        users.insert_one({
-            "_id": user_id,
-            "cash": 0,
-            "bank": 0,
-            "dirty": 0
-        })
-        user = {"cash": 0, "bank": 0, "dirty": 0}
-
-    embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
-
-    embed.add_field(name="💰 Novčanik", value=f"```{user['cash']:,}$```", inline=True)
-    embed.add_field(name="🏦 Banka", value=f"```{user['bank']:,}$```", inline=True)
-    embed.add_field(name="🕵️ Prljav novac", value=f"```{user['dirty']:,}$```", inline=True)
-
-    await ctx.reply(embed=embed, mention_author=False)
+V
 
 # ---------------- PREBACI ----------------
 @bot.command()
