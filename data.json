@@ -1,0 +1,19 @@
+{
+    "cash": {
+        "973286491306487838": 100
+    },
+    "bank": {
+        "973286491306487838": 0
+    },
+    "dirty": {
+        "973286491306487838": 0
+    },
+    "registered": [
+        "973286491306487838"
+    ],
+    "crime_cooldown": {},
+    "work_cooldown": {},
+    "daily_cooldown": {},
+    "credit_cooldown": {},
+    "rob_cooldown": {}
+}
