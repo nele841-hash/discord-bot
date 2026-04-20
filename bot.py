@@ -712,9 +712,10 @@ async def help(ctx):
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def giveaway(ctx, time: int, *, prize: str):
+
     embed = discord.Embed(
         title="🎁 GIVEAWAY!",
-        description=f"Prize: **{prize}**\nReaguj 🎉 da učestvuješ!\nTrajanje: {time} sekundi",
+        description=f"Nagrada: **{prize}**\nReaguj 🎉 da učestvuješ!\nTraje: {time} sekundi",
         color=discord.Color.gold()
     )
 
@@ -723,15 +724,21 @@ async def giveaway(ctx, time: int, *, prize: str):
 
     await asyncio.sleep(time)
 
-    msg = await ctx.channel.fetch_message(msg.id)
-    users = await msg.reactions[0].users()
-    users = [u for u in users if not u.bot]
+    new_msg = await ctx.channel.fetch_message(msg.id)
+
+    users = []
+    for reaction in new_msg.reactions:
+        if str(reaction.emoji) == "🎉":
+            async for user in reaction.users():
+                if not user.bot:
+                    users.append(user)
 
     if len(users) == 0:
         await ctx.send("❌ Nema učesnika!")
         return
 
     winner = random.choice(users)
+
     await ctx.send(f"🏆 Pobjednik je: {winner.mention} 🎉")
 # ---------------- RUN ----------------
 
