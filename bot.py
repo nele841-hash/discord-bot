@@ -4,13 +4,6 @@ import json
 import os
 import random
 import time
-import asyncio
-
-from pymongo import MongoClient
-
-client = MongoClient(os.getenv("MONGO_URL"))
-db = client["discordbot"]
-users = db["users"]
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -159,13 +152,22 @@ async def radi(ctx):
     await ctx.reply(embed=embed, mention_author=False)
 
 # ---------------- BANKA ----------------
-@bot.command() async def banka(ctx): user = str(ctx.author.id) if user not in registered_users: return await ctx.reply("❌ Moraš prvo otvoriti račun sa !prijava", mention_author=False) ensure_user(user) embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold()) embed.add_field(name="💰 Novčanik", value=f"
-{cash_data[user]:,}$
-", inline=True) embed.add_field(name="🏦 Banka", value=f"
-{bank[user]:,}$
-", inline=True) embed.add_field(name="🕵️ Prljav novac", value=f"
-{dirty_money[user]:,}$
-", inline=True) await ctx.reply(embed=embed, mention_author=False)
+@bot.command()
+async def banka(ctx):
+    user = str(ctx.author.id)
+
+    if user not in registered_users:
+        return await ctx.reply("❌ Moraš prvo otvoriti račun sa `!prijava`", mention_author=False)
+
+    ensure_user(user)
+
+    embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
+
+    embed.add_field(name="💰 Novčanik", value=f"```{cash_data[user]:,}$```", inline=True)
+    embed.add_field(name="🏦 Banka", value=f"```{bank[user]:,}$```", inline=True)
+    embed.add_field(name="🕵️ Prljav novac", value=f"```{dirty_money[user]:,}$```", inline=True)
+
+    await ctx.reply(embed=embed, mention_author=False)
 
 # ---------------- PREBACI ----------------
 @bot.command()
@@ -704,63 +706,8 @@ async def help(ctx):
         inline=False
     )
 
-    await ctx.reply(embed=embed) 
-#------------gg--------------------
-class GiveawayView(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout=None)
-        self.entries = []
+    await ctx.reply(embed=embed)
 
-    @discord.ui.button(label="🎉 Join", style=discord.ButtonStyle.green)
-    async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
-
-        user = interaction.user
-
-        if user.id in self.entries:
-            await interaction.response.send_message("❌ Već si u giveaway-u!", ephemeral=True)
-            return
-
-        self.entries.append(user.id)
-        await interaction.response.send_message("✅ Ušao si!", ephemeral=True)
-#-----------------GW-----------------
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def giveaway(ctx, time: int, *, prize: str):
-
-    view = GiveawayView()
-
-    embed = discord.Embed(
-        title="🎁 GIVEAWAY",
-        description=f"""
-🏆 Nagrada: **{prize}**
-👥 Učesnici: **0**
-⏳ Vrijeme: **{time}s**
-        """,
-        color=discord.Color.gold()
-    )
-
-    msg = await ctx.send(embed=embed, view=view)
-
-    while time > 0:
-        await asyncio.sleep(5)
-        time -= 5
-
-        embed.description = f"""
-🏆 Nagrada: **{prize}**
-👥 Učesnici: **{len(view.entries)}**
-⏳ Vrijeme: **{time}s**
-        """
-
-        await msg.edit(embed=embed, view=view)
-
-    if len(view.entries) == 0:
-        await ctx.send("❌ Nema učesnika!")
-        return
-
-    winner_id = random.choice(view.entries)
-    winner = await ctx.guild.fetch_member(winner_id)
-
-    await ctx.send(f"🏆 Pobjednik je: {winner.mention} 🎉")
 # ---------------- RUN ----------------
 
 import os
