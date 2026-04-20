@@ -6,6 +6,10 @@ import random
 import time
 import asyncio
 
+if not os.path.exists("data.json"):
+    with open("data.json", "w") as f:
+        json.dump({}, f)
+
 intents = discord.Intents.default()
 intents.message_content = True
 
