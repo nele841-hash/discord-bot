@@ -4,6 +4,7 @@ import json
 import os
 import random
 import time
+import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -707,7 +708,31 @@ async def help(ctx):
     )
 
     await ctx.reply(embed=embed)
+#-----------------GW-----------------
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def giveaway(ctx, time: int, *, prize: str):
+    embed = discord.Embed(
+        title="🎁 GIVEAWAY!",
+        description=f"Prize: **{prize}**\nReaguj 🎉 da učestvuješ!\nTrajanje: {time} sekundi",
+        color=discord.Color.gold()
+    )
 
+    msg = await ctx.send(embed=embed)
+    await msg.add_reaction("🎉")
+
+    await asyncio.sleep(time)
+
+    msg = await ctx.channel.fetch_message(msg.id)
+    users = await msg.reactions[0].users()
+    users = [u for u in users if not u.bot]
+
+    if len(users) == 0:
+        await ctx.send("❌ Nema učesnika!")
+        return
+
+    winner = random.choice(users)
+    await ctx.send(f"🏆 Pobjednik je: {winner.mention} 🎉")
 # ---------------- RUN ----------------
 
 import os
