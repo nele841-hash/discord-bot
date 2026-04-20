@@ -712,18 +712,18 @@ async def help(ctx):
 class GiveawayView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        self.users = set()
+        self.entries = []
 
     @discord.ui.button(label="🎉 Join", style=discord.ButtonStyle.green)
     async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         user = interaction.user
 
-        if user.id in self.users:
+        if user.id in self.entries:
             await interaction.response.send_message("❌ Već si u giveaway-u!", ephemeral=True)
             return
 
-        self.users.add(user.id)
+        self.entries.append(user.id)
         await interaction.response.send_message("✅ Ušao si!", ephemeral=True)
 #-----------------GW-----------------
 @bot.command()
@@ -750,17 +750,17 @@ async def giveaway(ctx, time: int, *, prize: str):
 
         embed.description = f"""
 🏆 Nagrada: **{prize}**
-👥 Učesnici: **{len(view.users)}**
+👥 Učesnici: **{len(view.entries)}**
 ⏳ Vrijeme: **{time}s**
         """
 
         await msg.edit(embed=embed, view=view)
 
-    if len(view.users) == 0:
+    if len(view.entries) == 0:
         await ctx.send("❌ Nema učesnika!")
         return
 
-    winner_id = random.choice(list(view.users))
+    winner_id = random.choice(view.entries)
     winner = await ctx.guild.fetch_member(winner_id)
 
     await ctx.send(f"🏆 Pobjednik je: {winner.mention} 🎉")
