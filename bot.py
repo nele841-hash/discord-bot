@@ -161,18 +161,24 @@ async def radi(ctx):
 # ---------------- BANKA ----------------
 @bot.command()
 async def banka(ctx):
-    user = str(ctx.author.id)
+    user_id = str(ctx.author.id)
 
-    if user not in registered_users:
-        return await ctx.reply("❌ Moraš prvo otvoriti račun sa `!prijava`", mention_author=False)
+    user = users.find_one({"_id": user_id})
 
-    ensure_user(user)
+    if not user:
+        users.insert_one({
+            "_id": user_id,
+            "cash": 0,
+            "bank": 0,
+            "dirty": 0
+        })
+        user = {"cash": 0, "bank": 0, "dirty": 0}
 
     embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
 
-    embed.add_field(name="💰 Novčanik", value=f"```{cash_data[user]:,}$```", inline=True)
-    embed.add_field(name="🏦 Banka", value=f"```{bank[user]:,}$```", inline=True)
-    embed.add_field(name="🕵️ Prljav novac", value=f"```{dirty_money[user]:,}$```", inline=True)
+    embed.add_field(name="💰 Novčanik", value=f"```{user['cash']:,}$```", inline=True)
+    embed.add_field(name="🏦 Banka", value=f"```{user['bank']:,}$```", inline=True)
+    embed.add_field(name="🕵️ Prljav novac", value=f"```{user['dirty']:,}$```", inline=True)
 
     await ctx.reply(embed=embed, mention_author=False)
 
