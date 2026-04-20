@@ -714,8 +714,9 @@ class GiveawayView(discord.ui.View):
         super().__init__(timeout=None)
         self.users = set()
 
-    @discord.ui.button(label="🎉 Join Giveaway", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="🎉 Join", style=discord.ButtonStyle.green)
     async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
+
         user = interaction.user
 
         if user.id in self.users:
@@ -723,7 +724,7 @@ class GiveawayView(discord.ui.View):
             return
 
         self.users.add(user.id)
-        await interaction.response.send_message("✅ Ušao si u giveaway!", ephemeral=True)
+        await interaction.response.send_message("✅ Ušao si!", ephemeral=True)
 #-----------------GW-----------------
 @bot.command()
 @commands.has_permissions(administrator=True)
@@ -735,9 +736,8 @@ async def giveaway(ctx, time: int, *, prize: str):
         title="🎁 GIVEAWAY",
         description=f"""
 🏆 Nagrada: **{prize}**
-
 👥 Učesnici: **0**
-⏳ Vrijeme: **{time} sekundi**
+⏳ Vrijeme: **{time}s**
         """,
         color=discord.Color.gold()
     )
@@ -750,9 +750,8 @@ async def giveaway(ctx, time: int, *, prize: str):
 
         embed.description = f"""
 🏆 Nagrada: **{prize}**
-
 👥 Učesnici: **{len(view.users)}**
-⏳ Vrijeme: **{time} sekundi**
+⏳ Vrijeme: **{time}s**
         """
 
         await msg.edit(embed=embed, view=view)
