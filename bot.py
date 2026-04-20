@@ -22,10 +22,19 @@ crime_cooldown = {}
 daily_cooldown = {}
 credit_cooldown = {}
 rob_cooldown = {}
+shop_items = {
+    "knife": 5000,
+    "pistol": 15000,
+    "torba": 10000
+}
+
+user_inventory = {}
 
 # ---------------- LOAD ----------------
 def load_data():
-    global cash_data, bank, dirty_money, registered_users, crime_cooldown, work_cooldown, daily_cooldown, credit_cooldown, rob_cooldown
+    global cash_data, bank, dirty_money, registered_users
+    global crime_cooldown, work_cooldown, daily_cooldown, credit_cooldown, rob_cooldown
+    global shop_items, user_inventory
 
     if os.path.exists(DATA_FILE):
         try:
@@ -43,27 +52,54 @@ def load_data():
                 credit_cooldown = {str(k): int(v) for k, v in data.get("credit_cooldown", {}).items()}
                 rob_cooldown = {str(k): int(v) for k, v in data.get("rob_cooldown", {}).items()}
 
+                # 🛒 SHOP + INVENTORY
+                shop_items = data.get("shop_items", {
+                    "knife": 5000,
+                    "pistol": 15000,
+                    "torba": 10000
+                })
+
+                user_inventory = data.get("user_inventory", {})
+
         except:
             cash_data = {}
             bank = {}
             dirty_money = {}
             registered_users = set()
+
             crime_cooldown = {}
             work_cooldown = {}
             daily_cooldown = {}
-            credit_cooldown = {}  
-            rob_cooldown = {}  
+            credit_cooldown = {}
+            rob_cooldown = {}
+
+            shop_items = {
+                "knife": 5000,
+                "pistol": 15000,
+                "torba": 10000
+            }
+
+            user_inventory = {}
 
     else:
         cash_data = {}
         bank = {}
         dirty_money = {}
         registered_users = set()
+
         crime_cooldown = {}
         work_cooldown = {}
         daily_cooldown = {}
         credit_cooldown = {}
-        rob_cooldown = {} 
+        rob_cooldown = {}
+
+        shop_items = {
+            "knife": 5000,
+            "pistol": 15000,
+            "torba": 10000
+        }
+
+        user_inventory = {}
 
 load_data()
 
@@ -80,6 +116,8 @@ def save_data():
             "daily_cooldown": daily_cooldown,
             "credit_cooldown": credit_cooldown,
             "rob_cooldown": rob_cooldown
+            "shop_items": shop_items,
+            "user_inventory": user_inventory,
         }, f, indent=4)
 # ---------------- USER INIT ----------------
 def ensure_user(user):
@@ -703,6 +741,79 @@ async def help(ctx):
     embed.add_field(
         name="⚙️ Admin",
         value="`!set @user <iznos>` - mijenja novac (samo owner)",
+        inline=False
+    )
+
+    await ctx.reply(embed=embed)
+
+#----------shop---------------
+@bot.command()
+async def shop(ctx):
+    embed = discord.Embed(
+        title="🛒 SHOP",
+        description="Dostupni itemi:",
+        color=discord.Color.gold()
+    )
+
+    for item, price in shop_items.items():
+        embed.add_field(
+            name=item.upper(),
+            value=f"💰 {price:,}$",
+            inline=False
+        )
+
+    embed.set_footer(text="Kupovina: !buy <item>")
+    await ctx.reply(embed=embed, mention_author=False)
+
+#----------------------buy----------------
+@bot.command()
+async def buy(ctx, item: str):
+    user = str(ctx.author.id)
+
+    ensure_user(user)
+
+    item = item.lower()
+
+    if item not in shop_items:
+        return await ctx.reply("❌ Taj item ne postoji u shopu!")
+
+    price = shop_items[item]
+
+    if cash_data[user] < price:
+        return await ctx.reply("❌ Nemaš dovoljno novca!")
+
+    cash_data[user] -= price
+
+    if user not in user_inventory:
+        user_inventory[user] = []
+
+    user_inventory[user].append(item)
+
+    save_data()
+
+    embed = discord.Embed(
+        title="KUPOVINA",
+        description=f"Kupio si **{item}**",
+        color=discord.Color.green()
+    )
+
+    await ctx.reply(embed=embed)
+
+#---------------inventory-----------
+@bot.command()
+async def inv(ctx):
+    user = str(ctx.author.id)
+
+    items = user_inventory.get(user, [])
+
+    if not items:
+        return await ctx.reply("📦 Nemaš ništa u inventory!")
+
+    embed = discord.Embed(title="📦 INVENTORY")
+
+    embed.add_field(
+        name="Tvoji itemi",
+        value="\n".join(items),
         inline=False
     )
 
