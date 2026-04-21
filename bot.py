@@ -1123,6 +1123,10 @@ async def pay(ctx, member: discord.Member, amount: int):
     if sender_cash < amount:
         return await ctx.reply("❌ Nemaš dovoljno novca!")
 
+    # 💸 TAX 10%
+    tax = int(amount * 0.10)
+    receive_amount = amount - tax
+
     users.update_one(
         {"_id": sender_id},
         {"$inc": {"cash": -amount}}
@@ -1130,7 +1134,7 @@ async def pay(ctx, member: discord.Member, amount: int):
 
     users.update_one(
         {"_id": receiver_id},
-        {"$inc": {"cash": amount}}
+        {"$inc": {"cash": receive_amount}}
     )
 
     embed = discord.Embed(
@@ -1140,7 +1144,9 @@ async def pay(ctx, member: discord.Member, amount: int):
 
     embed.add_field(name="📤 Pošiljaoc", value=f"{ctx.author.mention}", inline=False)
     embed.add_field(name="📥 Primalac", value=f"{member.mention}", inline=False)
-    embed.add_field(name="💰 Iznos", value=f"`{amount:,}$`", inline=False)
+    embed.add_field(name="💰 Poslano", value=f"`{amount:,}$`", inline=False)
+    embed.add_field(name="🏦 Tax (10%)", value=f"`{tax:,}$`", inline=False)
+    embed.add_field(name="💵 Primalac dobija", value=f"`{receive_amount:,}$`", inline=False)
 
     await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
