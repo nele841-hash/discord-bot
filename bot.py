@@ -1049,19 +1049,23 @@ async def uzmipare(ctx):
         return await ctx.reply("❌ Nemaš biznis!")
 
     now = int(time.time())
-
     last_pay = user.get("business_last_pay", 0)
 
+    # ⏳ COOLDOWN
     if now - last_pay < 86400:
         left = 86400 - (now - last_pay)
         hours = left // 3600
         minutes = (left % 3600) // 60
 
-        return await ctx.reply(
-            f"⏳ Čekaj još **{hours}h {minutes}m**",
-            mention_author=False
+        embed = discord.Embed(
+            title="🏢 BIZNIS",
+            description=f"⏳ Sačekaj još **{hours}h {minutes}m** da bi mogao uzeti pare iz biznisa.",
+            color=discord.Color.orange()
         )
 
+        return await ctx.reply(embed=embed)
+
+    # 💰 zarade
     earnings_map = {
         "fabrikabudjavoggraza": 30000,
         "kiosk": 10000,
@@ -1084,13 +1088,13 @@ async def uzmipare(ctx):
     )
 
     embed.add_field(
-        name="Biznis",
+        name="🏢 Biznis",
         value=f"`{biznis}`",
         inline=False
     )
 
     embed.add_field(
-        name="Zarada",
+        name="💸 Zarada",
         value=f"```+{earnings:,}$```",
         inline=False
     )
