@@ -1,19 +1,27 @@
 import discord
 from discord.ext import commands
+import time
+import os
+from pymongo import MongoClient
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 
-from pymongo import MongoClient
-import os
-
+# ---------------- MONGO ----------------
 client = MongoClient(os.getenv("MONGO_URL"))
 db = client["discordbot"]
 users = db["users"]
 
+# ---------------- SHOP ITEMS ----------------
+shop_items = {
+    "pistol": 15000,
+    "knife": 5000,
+    "zastita": 20000
+}
 
+# ---------------- USER INIT ----------------
 def get_user(user_id):
     user = users.find_one({"_id": user_id})
 
@@ -30,7 +38,6 @@ def get_user(user_id):
         user = users.find_one({"_id": user_id})
 
     return user
-
 @bot.event
 async def on_ready():
     print(f"✅ Bot je online kao {bot.user}")
