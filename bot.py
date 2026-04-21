@@ -134,6 +134,13 @@ async def banka(ctx):
 
     embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
 
+    # 👤 KORISNIK
+    embed.add_field(
+        name="👤 Korisnik",
+        value=f"```{ctx.author.name}```",
+        inline=False
+    )
+
     # 💰 NOVČANIK / BANKA / PRLJAV
     embed.add_field(name="💰 Novčanik", value=f"`{cash:,}$`", inline=True)
     embed.add_field(name="🏦 Banka", value=f"`{bank_money:,}$`", inline=True)
