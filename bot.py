@@ -552,7 +552,7 @@ async def pljackaj(ctx, member: discord.Member):
 #-----------------SET-----------------------
 @bot.command()
 async def set(ctx, member: discord.Member, amount: int):
-    OWNER_ID = 973286491306487838
+    OWNER_ID = 1423978463290982470
 
     if ctx.author.id != OWNER_ID:
         return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
