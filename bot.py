@@ -1115,21 +1115,19 @@ async def pay(ctx, member: discord.Member, amount: int):
     await ctx.reply(embed=embed)
 
 #--------------top------------
+# ---------------- TOP10 ----------------
 @bot.command()
 async def top10(ctx):
-    top_users = users.find().sort("cash", -1).limit(10)
+    top_users = users.find().limit(100)  # uzmi više pa sortiraj ručno
 
-    embed = discord.Embed(
-        title="🏆 TOP 10 NAJBOGATIJIH IGRAČA",
-        color=discord.Color.gold(),
-        description="💰 Rang lista po cash stanju"
-    )
+    leaderboard = []
 
-    leaderboard = ""
-
-    i = 1
-    for u in top_users:   # ✅ FIX OVDJE
+    for u in top_users:
         user_id = u["_id"]
+        cash = u.get("cash", 0)
+        bank = u.get("bank", 0)
+
+        total = cash + bank  # 💰 KLJUČNA PROMJENA
 
         try:
             member = await bot.fetch_user(int(user_id))
@@ -1137,25 +1135,31 @@ async def top10(ctx):
         except:
             name = "Unknown"
 
-        money = u.get("cash", 0)
+        leaderboard.append((name, total))
 
-        medals = ["🥇", "🥈", "🥉"]
+    # sort po ukupno
+    leaderboard.sort(key=lambda x: x[1], reverse=True)
+
+    embed = discord.Embed(
+        title="🏆 TOP 10 NAJBOGATIJIH (BANKA + CASH)",
+        color=discord.Color.gold()
+    )
+
+    text = ""
+
+    medals = ["🥇", "🥈", "🥉"]
+
+    for i, (name, total) in enumerate(leaderboard[:10], start=1):
         medal = medals[i-1] if i <= 3 else f"#{i}"
-
-        leaderboard += f"{medal} **{name}**\n💰 `{money:,}$`\n\n"
-
-        i += 1
+        text += f"{medal} **{name}**\n💰 `{total:,}$`\n\n"
 
     embed.add_field(
-        name="📊 Leaderboard",
-        value=leaderboard or "❌ Nema podataka",
+        name="📊 Rang lista",
+        value=text or "❌ Nema podataka",
         inline=False
     )
 
-    embed.set_footer(text="Ažurirano uživo 🕒")
-
     await ctx.reply(embed=embed)
-
 # ---------------- RESET SVE (FULL WIPE) ----------------
 @bot.command()
 async def rr(ctx):
