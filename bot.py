@@ -731,7 +731,6 @@ async def rulet(ctx, choice: str, amount: int):
     embed.add_field(name="Stanje", value=f"```{updated.get('cash', 0):,}$```", inline=False)
 
     await ctx.reply(embed=embed, mention_author=False)
-V
 
 #-------------HELP-----------------
 @bot.command()
