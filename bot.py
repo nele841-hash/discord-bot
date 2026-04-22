@@ -554,8 +554,10 @@ async def pljackaj(ctx, member: discord.Member):
 async def set(ctx, member: discord.Member, amount: int):
     OWNER_IDS = [
         1423978463290982470,
-        973286491306487838,  
-        633262690139242507   
+        633262690139242507,  # zamijeni drugim ID-om
+        973286491306487838   # zamijeni trećim ID-om
+    ]
+
     if ctx.author.id not in OWNER_IDS:
         return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
 
