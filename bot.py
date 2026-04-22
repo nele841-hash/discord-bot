@@ -1155,6 +1155,37 @@ async def top10(ctx):
     embed.set_footer(text="Ažurirano uživo 🕒")
 
     await ctx.reply(embed=embed)
+
+# ---------------- RESET SVE ----------------
+@bot.command()
+async def rr(ctx):
+    OWNER_ID = 973286491306487838
+
+    if ctx.author.id != OWNER_ID:
+        return await ctx.reply("❌ Nemaš dozvolu!")
+
+    users.update_many(
+        {},
+        {
+            "$set": {
+                "cash": 100,
+                "bank": 0,
+                "dirty": 0,
+                "inventory": [],
+                "business": None,
+                "business_last_pay": 0,
+                "rob_cd": 0
+            }
+        }
+    )
+
+    embed = discord.Embed(
+        title="🔄 RESET ECONOMY",
+        description="✔️ Svi igrači su resetovani!",
+        color=discord.Color.red()
+    )
+
+    await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
 
 
