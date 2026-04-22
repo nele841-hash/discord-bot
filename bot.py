@@ -552,9 +552,11 @@ async def pljackaj(ctx, member: discord.Member):
 #-----------------SET-----------------------
 @bot.command()
 async def set(ctx, member: discord.Member, amount: int):
-    OWNER_ID = 1423978463290982470
-
-    if ctx.author.id != OWNER_ID:
+    OWNER_IDS = [
+        1423978463290982470,
+        973286491306487838,  
+        633262690139242507   
+    if ctx.author.id not in OWNER_IDS:
         return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
 
     user_id = str(member.id)
@@ -566,12 +568,12 @@ async def set(ctx, member: discord.Member, amount: int):
     )
 
     embed = discord.Embed(
-        title="SET NOVCA",
+        title="💰 SET NOVCA",
         color=discord.Color.gold()
     )
 
-    embed.add_field(name="Korisnik:", value=f"{member.mention}", inline=False)
-    embed.add_field(name="Novo stanje:", value=f"```{amount}$```", inline=False)
+    embed.add_field(name="👤 Korisnik", value=f"{member.mention}", inline=False)
+    embed.add_field(name="💸 Novo stanje", value=f"```{amount:,}$```", inline=False)
 
     await ctx.reply(embed=embed, mention_author=False)
 
