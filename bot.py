@@ -1141,7 +1141,7 @@ async def top10(ctx):
     leaderboard.sort(key=lambda x: x[1], reverse=True)
 
     embed = discord.Embed(
-        title="🏆 TOP 10 NAJBOGATIJIH (BANKA + CASH)",
+        title="🏆 TOP 10 NAJBOGATIJIH",
         color=discord.Color.gold()
     )
 
