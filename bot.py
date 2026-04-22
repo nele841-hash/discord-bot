@@ -1114,7 +1114,7 @@ async def pay(ctx, member: discord.Member, amount: int):
 
     await ctx.reply(embed=embed)
 
-# ---------------- TOP10 ----------------
+#--------------top------------
 @bot.command()
 async def top10(ctx):
     top_users = users.find().sort("cash", -1).limit(10)
@@ -1122,13 +1122,13 @@ async def top10(ctx):
     embed = discord.Embed(
         title="🏆 TOP 10 NAJBOGATIJIH IGRAČA",
         color=discord.Color.gold(),
-        description="💰 Rang lista po stanju u novčaniku"
+        description="💰 Rang lista po cash stanju"
     )
 
     leaderboard = ""
 
     i = 1
-    async for u in top_users:
+    for u in top_users:   # ✅ FIX OVDJE
         user_id = u["_id"]
 
         try:
@@ -1146,16 +1146,13 @@ async def top10(ctx):
 
         i += 1
 
-    if not leaderboard:
-        leaderboard = "❌ Nema podataka."
-
     embed.add_field(
-        name="📊 Rang lista",
-        value=leaderboard,
+        name="📊 Leaderboard",
+        value=leaderboard or "❌ Nema podataka",
         inline=False
     )
 
-    embed.set_footer(text="Ažurirano u realnom vremenu 🕒")
+    embed.set_footer(text="Ažurirano uživo 🕒")
 
     await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
