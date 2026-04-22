@@ -134,7 +134,7 @@ async def banka(ctx):
 
     embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
 
-    # 👤 KORISNIK (NORMALNO, BEZ ``` ```)
+    # 👤 KORISNIK
     embed.add_field(
         name="👤 Korisnik",
         value=f"{ctx.author.name}",
@@ -163,16 +163,16 @@ async def banka(ctx):
 
     embed.add_field(name="📦 Inventory", value=inv_text, inline=True)
 
-    # 🏢 BIZNIS
+    # 🏢 BIZNIS (NOVI SISTEM IMENA)
     biznis = user.get("business")
 
-    if biznis:
-        biz_names = {
-            "fabrikabudjavoggraza": "Fabrika budjavog graza",
-            "kiosk": "Kiosk",
-            "autopraonica": "Autopraonica"
-        }
+    biz_names = {
+        "kladionica": "🎰 Kladionica",
+        "klaonica": "🥩 Klaonica",
+        "kiosk": "🏪 Kiosk"
+    }
 
+    if biznis:
         biz_text = biz_names.get(biznis, biznis)
     else:
         biz_text = "Nemaš biznis"
@@ -731,40 +731,7 @@ async def rulet(ctx, choice: str, amount: int):
     embed.add_field(name="Stanje", value=f"```{updated.get('cash', 0):,}$```", inline=False)
 
     await ctx.reply(embed=embed, mention_author=False)
-#---------------------TOP10---------------------
-@bot.command()
-async def top10(ctx):
-    top_users = users.find().sort("cash", -1).limit(10)
-
-    embed = discord.Embed(
-        title="TOP 10 NAJBOGATIJIH",
-        color=discord.Color.gold()
-    )
-
-    desc = ""
-
-    i = 1
-    async for u in top_users:
-        user_id = u["_id"]
-
-        try:
-            member = await bot.fetch_user(int(user_id))
-            name = member.name
-        except:
-            name = "Unknown"
-
-        money = u.get("cash", 0)
-        formatted = f"{money:,}"
-
-        desc += f"**{i}. {name}** — `{formatted}$`\n"
-        i += 1
-
-    if not desc:
-        desc = "Nema podataka."
-
-    embed.description = desc
-
-    await ctx.reply(embed=embed)
+V
 
 #-------------HELP-----------------
 @bot.command()
@@ -935,20 +902,20 @@ async def biznisi(ctx):
     )
 
     embed.add_field(
-        name="🏭 Fabrika budjavog graza",
-        value="💰 Cijena: `100,000$`\n💸 Zarada: `30,000$ / 24h`",
+        name="🎰 Kladionica",
+        value="💰 Cijena: `1,000,000$`\n💸 Zarada: `100,000$ / 24h`",
+        inline=False
+    )
+
+    embed.add_field(
+        name="🥩 Klaonica",
+        value="💰 Cijena: `500,000$`\n💸 Zarada: `75,000$ / 24h`",
         inline=False
     )
 
     embed.add_field(
         name="🏪 Kiosk",
-        value="💰 Cijena: `50,000$`\n💸 Zarada: `10,000$ / 24h`",
-        inline=False
-    )
-
-    embed.add_field(
-        name="🚗 Autopraonica",
-        value="💰 Cijena: `75,000$`\n💸 Zarada: `20,000$ / 24h`",
+        value="💰 Cijena: `200,000$`\n💸 Zarada: `30,000$ / 24h`",
         inline=False
     )
 
@@ -972,16 +939,17 @@ async def kupibiz(ctx, *, biznis: str):
 
     biznis = biznis.lower().replace(" ", "")
 
+    # 🏢 NOVI BIZNISI
     biz = {
-        "fabrikabudjavoggraza": 100000,
-        "kiosk": 50000,
-        "autopraonica": 75000
+        "kladionica": 1000000,
+        "klaonica": 500000,
+        "kiosk": 200000
     }
 
     names = {
-        "fabrikabudjavoggraza": "Fabrika budjavog graza",
-        "kiosk": "Kiosk",
-        "autopraonica": "Autopraonica"
+        "kladionica": "🎰 Kladionica",
+        "klaonica": "🥩 Klaonica",
+        "kiosk": "🏪 Kiosk"
     }
 
     if biznis not in biz:
@@ -1042,7 +1010,7 @@ async def uzmipare(ctx):
     now = int(time.time())
     last_pay = user.get("business_last_pay", 0)
 
-    # ⏳ COOLDOWN
+    # 🕒 COOLDOWN
     if now - last_pay < 86400:
         left = 86400 - (now - last_pay)
         hours = left // 3600
@@ -1056,11 +1024,17 @@ async def uzmipare(ctx):
 
         return await ctx.reply(embed=embed)
 
-    # 💰 zarade
+    # 💰 ZARADE
     earnings_map = {
-        "fabrikabudjavoggraza": 30000,
-        "kiosk": 10000,
-        "autopraonica": 20000
+        "kladionica": 100000,
+        "klaonica": 75000,
+        "kiosk": 30000
+    }
+
+    names = {
+        "kladionica": "🎰 Kladionica",
+        "klaonica": "🥩 Klaonica",
+        "kiosk": "🏪 Kiosk"
     }
 
     earnings = earnings_map.get(biznis, 0)
@@ -1080,7 +1054,7 @@ async def uzmipare(ctx):
 
     embed.add_field(
         name="🏢 Biznis",
-        value=f"`{biznis}`",
+        value=f"{names.get(biznis, biznis)}",
         inline=False
     )
 
@@ -1138,6 +1112,51 @@ async def pay(ctx, member: discord.Member, amount: int):
     embed.add_field(name="💰 Poslano", value=f"`{amount:,}$`", inline=False)
     embed.add_field(name="🏦 Tax (10%)", value=f"`{tax:,}$`", inline=False)
     embed.add_field(name="💵 Primalac dobija", value=f"`{receive_amount:,}$`", inline=False)
+
+    await ctx.reply(embed=embed)
+
+# ---------------- TOP10 ----------------
+@bot.command()
+async def top10(ctx):
+    top_users = users.find().sort("cash", -1).limit(10)
+
+    embed = discord.Embed(
+        title="🏆 TOP 10 NAJBOGATIJIH IGRAČA",
+        color=discord.Color.gold(),
+        description="💰 Rang lista po stanju u novčaniku"
+    )
+
+    leaderboard = ""
+
+    i = 1
+    async for u in top_users:
+        user_id = u["_id"]
+
+        try:
+            member = await bot.fetch_user(int(user_id))
+            name = member.name
+        except:
+            name = "Unknown"
+
+        money = u.get("cash", 0)
+
+        medals = ["🥇", "🥈", "🥉"]
+        medal = medals[i-1] if i <= 3 else f"#{i}"
+
+        leaderboard += f"{medal} **{name}**\n💰 `{money:,}$`\n\n"
+
+        i += 1
+
+    if not leaderboard:
+        leaderboard = "❌ Nema podataka."
+
+    embed.add_field(
+        name="📊 Rang lista",
+        value=leaderboard,
+        inline=False
+    )
+
+    embed.set_footer(text="Ažurirano u realnom vremenu 🕒")
 
     await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
