@@ -1162,8 +1162,9 @@ async def rr(ctx):
     OWNER_ID = 973286491306487838
 
     if ctx.author.id != OWNER_ID:
-        return await ctx.reply("❌ Nemaš dozvolu!")
+        return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
 
+    # 🧹 RESET BAZE (SVE IGRAČE)
     users.update_many(
         {},
         {
@@ -1174,16 +1175,42 @@ async def rr(ctx):
                 "inventory": [],
                 "business": None,
                 "business_last_pay": 0,
-                "rob_cd": 0
+                "rob_cd": 0,
+                "daily_cd": 0,
+                "credit_cd": 0,
+                "work_cd": 0
             }
         }
     )
 
+    # 🧹 RESET DICT COOLDOWNOVA (ako ih koristiš u RAM-u)
+    try:
+        rob_cooldown.clear()
+    except:
+        pass
+
+    try:
+        credit_cooldown.clear()
+    except:
+        pass
+
+    try:
+        daily_cooldown.clear()
+    except:
+        pass
+
+    try:
+        work_cooldown.clear()
+    except:
+        pass
+
     embed = discord.Embed(
-        title="🔄 RESET ECONOMY",
-        description="✔️ Svi igrači su resetovani!",
+        title="🔄 FULL RESET IZVRŠEN",
+        description="✔️ Svi igrači su resetovani!\n💰 Cash, biznisi, inventory i cooldowni su očišćeni.",
         color=discord.Color.red()
     )
+
+    embed.set_footer(text="Server economy restartovan 🧹")
 
     await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
