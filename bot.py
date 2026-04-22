@@ -1156,7 +1156,7 @@ async def top10(ctx):
 
     await ctx.reply(embed=embed)
 
-# ---------------- RESET SVE ----------------
+# ---------------- RESET SVE (FULL WIPE) ----------------
 @bot.command()
 async def rr(ctx):
     OWNER_ID = 973286491306487838
@@ -1164,53 +1164,14 @@ async def rr(ctx):
     if ctx.author.id != OWNER_ID:
         return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
 
-    # 🧹 RESET BAZE (SVE IGRAČE)
-    users.update_many(
-        {},
-        {
-            "$set": {
-                "cash": 100,
-                "bank": 0,
-                "dirty": 0,
-                "inventory": [],
-                "business": None,
-                "business_last_pay": 0,
-                "rob_cd": 0,
-                "daily_cd": 0,
-                "credit_cd": 0,
-                "work_cd": 0
-            }
-        }
-    )
-
-    # 🧹 RESET DICT COOLDOWNOVA (ako ih koristiš u RAM-u)
-    try:
-        rob_cooldown.clear()
-    except:
-        pass
-
-    try:
-        credit_cooldown.clear()
-    except:
-        pass
-
-    try:
-        daily_cooldown.clear()
-    except:
-        pass
-
-    try:
-        work_cooldown.clear()
-    except:
-        pass
+    # 🧨 BRIŠE SVE KORISNIKE (RESET PRIJAVA)
+    users.delete_many({})
 
     embed = discord.Embed(
-        title="🔄 FULL RESET IZVRŠEN",
-        description="✔️ Svi igrači su resetovani!\n💰 Cash, biznisi, inventory i cooldowni su očišćeni.",
+        title="🔄 FULL WIPE RESET",
+        description="✔️ Svi računi su obrisani!\n🔐 Sada svi moraju ponovo `!prijava`",
         color=discord.Color.red()
     )
-
-    embed.set_footer(text="Server economy restartovan 🧹")
 
     await ctx.reply(embed=embed)
 # ---------------- RUN ----------------
