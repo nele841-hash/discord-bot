@@ -1118,7 +1118,7 @@ async def pay(ctx, member: discord.Member, amount: int):
 
     await ctx.reply(embed=embed)
 
-#--------------top------------
+
 # ---------------- TOP10 ----------------
 @bot.command()
 async def top10(ctx):
@@ -1167,7 +1167,7 @@ async def top10(ctx):
 # ---------------- RESET SVE (FULL WIPE) ----------------
 @bot.command()
 async def rr(ctx):
-    OWNER_ID = 973286491306487838
+    OWNER_ID = 633262690139242507
 
     if ctx.author.id != OWNER_ID:
         return await ctx.reply("❌ Nemaš dozvolu!", mention_author=False)
