@@ -480,7 +480,7 @@ async def pljackaj(ctx, member: discord.Member):
     # 🔪 UVIJEK izgubi nož
     attacker_inv.remove("knife")
 
-    # 🛡️ AKO IMA ZAŠTITU → uvijek je izgubi
+    # 🛡️ ZAŠTITA
     if "zastita" in target_inv:
         target_inv.remove("zastita")
 
@@ -502,8 +502,8 @@ async def pljackaj(ctx, member: discord.Member):
         embed.add_field(
             name="Rezultat",
             value=(
-                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
-                f"ŽRTVA\n```{member}```\n\n"
+                f"PLJAČKAŠ\n```{ctx.author}```\n"
+                f"ŽRTVA\n```{member}```\n"
                 f"ISHOD\n```Zaštita je blokirala pljačku```"
             ),
             inline=False
@@ -547,8 +547,8 @@ async def pljackaj(ctx, member: discord.Member):
         embed.add_field(
             name="Rezultat",
             value=(
-                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
-                f"ŽRTVA\n```{member}```\n\n"
+                f"PLJAČKAŠ\n```{ctx.author}```\n"
+                f"ŽRTVA\n```{member}```\n"
                 f"UKRADENO\n```{stolen:,}$```"
             ),
             inline=False
@@ -574,15 +574,14 @@ async def pljackaj(ctx, member: discord.Member):
         embed.add_field(
             name="Rezultat",
             value=(
-                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
-                f"ŽRTVA\n```{member}```\n\n"
+                f"PLJAČKAŠ\n```{ctx.author}```\n"
+                f"ŽRTVA\n```{member}```\n"
                 f"KAZNA\n```{fine:,}$```"
             ),
             inline=False
         )
 
     await ctx.reply(embed=embed, mention_author=False)
-
 #-----------------SET-----------------------
 @bot.command()
 async def set(ctx, member: discord.Member, amount: int):
