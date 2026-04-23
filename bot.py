@@ -502,7 +502,7 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nISHOD: Zaštita je blokirala pljačku```",
+            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` ISHOD: ```Zaštita je blokirala pljačku```",
             inline=False
         )
 
@@ -543,7 +543,7 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nUKRADENO: {stolen:,}$```",
+            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` UKRADENO: ```{stolen:,}$```",
             inline=False
         )
 
@@ -566,7 +566,7 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nKAZNA: {fine:,}$```",
+            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` KAZNA: ```{fine:,}$```",
             inline=False
         )
 
