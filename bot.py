@@ -578,7 +578,7 @@ async def set(ctx, member: discord.Member, amount: int):
     OWNER_IDS = [
         1423978463290982470,
         633262690139242507,  # zamijeni drugim ID-om
-        973286491306487838   # zamijeni trećim ID-om
+        910227902166102068   # zamijeni trećim ID-om
     ]
 
     if ctx.author.id not in OWNER_IDS:
