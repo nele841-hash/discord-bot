@@ -446,7 +446,8 @@ async def kredit(ctx):
 
     await ctx.reply(embed=embed, mention_author=False)
 
-#-------------pljackaj-----------------
+#-------------PLJACKAJ-------------
+
 @bot.command()
 async def pljackaj(ctx, member: discord.Member):
     user_id = str(ctx.author.id)
@@ -477,18 +478,43 @@ async def pljackaj(ctx, member: discord.Member):
     if "knife" not in attacker_inv:
         return await ctx.reply("❌ Treba ti nož za pljačku!", mention_author=False)
 
-    success = random.randint(1, 100) <= 60
-    target_cash = target.get("cash", 0)
+    # 🔪 UVIJEK izgubi nož
+    attacker_inv.remove("knife")
 
-    # ❌ NEMA PARA
-    if target_cash <= 0:
-        attacker_inv.remove("knife")
+    # 🛡️ AKO IMA ZAŠTITU → uvijek je izgubi
+    if "zastita" in target_inv:
+        target_inv.remove("zastita")
 
         users.update_one(
             {"_id": user_id},
-            {
-                "$set": {"inventory": attacker_inv, "rob_cd": now}
-            }
+            {"$set": {"inventory": attacker_inv, "rob_cd": now}}
+        )
+
+        users.update_one(
+            {"_id": target_id},
+            {"$set": {"inventory": target_inv}}
+        )
+
+        embed = discord.Embed(
+            title="🛡️ ZAŠTITA AKTIVIRANA",
+            color=discord.Color.blue()
+        )
+
+        embed.add_field(
+            name="Rezultat",
+            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nISHOD: Zaštita je blokirala pljačku```",
+            inline=False
+        )
+
+        return await ctx.reply(embed=embed, mention_author=False)
+
+    success = random.randint(1, 100) <= 60
+    target_cash = target.get("cash", 0)
+
+    if target_cash <= 0:
+        users.update_one(
+            {"_id": user_id},
+            {"$set": {"inventory": attacker_inv, "rob_cd": now}}
         )
 
         return await ctx.reply("❌ Nema para! Izgubio si nož.", mention_author=False)
@@ -496,10 +522,6 @@ async def pljackaj(ctx, member: discord.Member):
     # ✔️ USPJEH
     if success:
         stolen = int(target_cash * 0.30)
-
-        # 🔪 nož se troši
-        if "knife" in attacker_inv:
-            attacker_inv.remove("knife")
 
         users.update_one(
             {"_id": target_id},
@@ -519,16 +541,15 @@ async def pljackaj(ctx, member: discord.Member):
             color=discord.Color.green()
         )
 
-        embed.add_field(name="Pljačkaš", value=f"```{ctx.author}```", inline=False)
-        embed.add_field(name="Žrtva", value=f"```{member}```", inline=False)
-        embed.add_field(name="Ukradeno", value=f"```{stolen:,}$```", inline=False)
+        embed.add_field(
+            name="Rezultat",
+            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nUKRADENO: {stolen:,}$```",
+            inline=False
+        )
 
     # ❌ FAIL
     else:
         fine = random.randint(1000, 3000)
-
-        if "knife" in attacker_inv:
-            attacker_inv.remove("knife")
 
         users.update_one(
             {"_id": user_id},
@@ -543,9 +564,11 @@ async def pljackaj(ctx, member: discord.Member):
             color=discord.Color.red()
         )
 
-        embed.add_field(name="Pljačkaš", value=f"```{ctx.author}```", inline=False)
-        embed.add_field(name="Žrtva", value=f"```{member}```", inline=False)
-        embed.add_field(name="Kazna", value=f"```{fine:,}$```", inline=False)
+        embed.add_field(
+            name="Rezultat",
+            value=f"```PLJAČKAŠ: {ctx.author}\nŽRTVA: {member}\nKAZNA: {fine:,}$```",
+            inline=False
+        )
 
     await ctx.reply(embed=embed, mention_author=False)
 
