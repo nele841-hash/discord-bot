@@ -447,7 +447,6 @@ async def kredit(ctx):
     await ctx.reply(embed=embed, mention_author=False)
 
 #-------------PLJACKAJ-------------
-
 @bot.command()
 async def pljackaj(ctx, member: discord.Member):
     user_id = str(ctx.author.id)
@@ -502,7 +501,11 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` ISHOD: ```Zaštita je blokirala pljačku```",
+            value=(
+                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
+                f"ŽRTVA\n```{member}```\n\n"
+                f"ISHOD\n```Zaštita je blokirala pljačku```"
+            ),
             inline=False
         )
 
@@ -543,7 +546,11 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` UKRADENO: ```{stolen:,}$```",
+            value=(
+                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
+                f"ŽRTVA\n```{member}```\n\n"
+                f"UKRADENO\n```{stolen:,}$```"
+            ),
             inline=False
         )
 
@@ -566,7 +573,11 @@ async def pljackaj(ctx, member: discord.Member):
 
         embed.add_field(
             name="Rezultat",
-            value=f"PLJAČKAŠ: ```{ctx.author}\n``` ŽRTVA: ```{member}\n``` KAZNA: ```{fine:,}$```",
+            value=(
+                f"PLJAČKAŠ\n```{ctx.author}```\n\n"
+                f"ŽRTVA\n```{member}```\n\n"
+                f"KAZNA\n```{fine:,}$```"
+            ),
             inline=False
         )
 
