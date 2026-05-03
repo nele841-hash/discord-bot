@@ -132,38 +132,53 @@ async def banka(ctx):
     bank_money = user.get("bank", 0)
     dirty = user.get("dirty", 0)
 
-    embed = discord.Embed(title="🏦 Vaš račun", color=discord.Color.gold())
+    embed = discord.Embed(
+        title="🏦 VAŠ RAČUN",
+        color=discord.Color.gold()
+    )
 
-    # 👤 KORISNIK
+    # 👤 USER
     embed.add_field(
         name="👤 Korisnik",
         value=f"{ctx.author.name}",
         inline=False
     )
 
-    # 💰 NOVČANIK / BANKA / PRLJAV
-    embed.add_field(name="💰 Novčanik", value=f"```{cash:,}$```", inline=True)
-    embed.add_field(name="🏦 Banka", value=f"```{bank_money:,}$```", inline=True)
-    embed.add_field(name="🕵️ Prljav novac", value=f"```{dirty:,}$```", inline=True)
+    # 💰 MONEY
+    embed.add_field(
+        name="💰 Novčanik",
+        value=f"```{cash:,}$```",
+        inline=True
+    )
+
+    embed.add_field(
+        name="🏦 Banka",
+        value=f"```{bank_money:,}$```",
+        inline=True
+    )
+
+    embed.add_field(
+        name="🕵️ Prljav novac",
+        value=f"```{dirty:,}$```",
+        inline=True
+    )
 
     # 📦 INVENTORY
     items = user.get("inventory", [])
 
-    if items:
-        names = {
-            "pistol": "Pištolj",
-            "knife": "Nož",
-            "zastita": "Zaštita"
-        }
+    names = {
+        "pistol": "Pištolj",
+        "knife": "Nož",
+        "zastita": "Zaštita"
+    }
 
+    if items:
         pretty_items = [names.get(i, i) for i in items]
         inv_text = "\n".join(f"`{i}`" for i in pretty_items)
     else:
         inv_text = "`Prazno`"
 
-    embed.add_field(name="📦 Inventory", value=inv_text, inline=True)
-
-    # 🏢 BIZNIS (NOVI SISTEM IMENA)
+    # 🏢 BIZNIS
     biznis = user.get("business")
 
     biz_names = {
@@ -172,12 +187,20 @@ async def banka(ctx):
         "kiosk": "🏪 Kiosk"
     }
 
-    if biznis:
-        biz_text = biz_names.get(biznis, biznis)
-    else:
-        biz_text = "Nemaš biznis"
+    biz_text = biz_names.get(biznis, "Nemaš biznis") if biznis else "Nemaš biznis"
 
-    embed.add_field(name="🏢 Biznis", value=f"`{biz_text}`", inline=True)
+    # 📊 ZBIJENI LAYOUT (KLJUČ FIX)
+    embed.add_field(
+        name="📦 Inventory",
+        value=inv_text,
+        inline=True
+    )
+
+    embed.add_field(
+        name="🏢 Biznis",
+        value=f"`{biz_text}`",
+        inline=True
+    )
 
     await ctx.reply(embed=embed)
 # ---------------- PREBACI ----------------
